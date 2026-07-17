@@ -43,6 +43,14 @@ RUN echo "=== authorized_keys content ===" \
     && ls -la /home/crabbox /home/crabbox/.ssh
 # --- END TEMP DEBUG ---
 
+# Explicitly set sshd config instead of relying on Alpine defaults
+RUN { \
+      echo "PubkeyAuthentication yes"; \
+      echo "AuthorizedKeysFile .ssh/authorized_keys"; \
+      echo "PasswordAuthentication no"; \
+      echo "PermitRootLogin no"; \
+    } >> /etc/ssh/sshd_config
+
 USER crabbox
 ENV SHELL=/bin/bash
 RUN echo 'eval "$(fnm env --use-on-cd)"' >> /home/crabbox/.bashrc
