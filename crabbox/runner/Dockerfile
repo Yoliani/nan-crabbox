@@ -55,6 +55,9 @@ RUN sed -i \
 RUN echo "=== sshd_config AFTER our changes ===" \
     && grep -inE '^(PubkeyAuthentication|AuthorizedKeysFile|PasswordAuthentication|PermitRootLogin)' /etc/ssh/sshd_config
 
+RUN echo "=== full sshd_config, no filtering ===" \
+    && cat -n /etc/ssh/sshd_config
+
 USER crabbox
 ENV SHELL=/bin/bash
 RUN echo 'eval "$(fnm env --use-on-cd)"' >> /home/crabbox/.bashrc
