@@ -21,7 +21,8 @@ RUN apk add --no-cache \
 # crabbox connects as a dedicated non-root user
 RUN adduser -D -s /bin/bash crabbox \
     && mkdir -p /work/crabbox \
-    && chown -R crabbox:crabbox /work/crabbox
+    && chown -R crabbox:crabbox /work/crabbox \
+    && passwd -u crabbox
 
 # sshd host keys + authorized_keys dir
 RUN ssh-keygen -A \
