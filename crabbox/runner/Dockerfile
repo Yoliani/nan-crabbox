@@ -51,7 +51,15 @@ RUN { \
       echo "PermitRootLogin no"; \
     } >> /etc/ssh/sshd_config
 
-RUN grep -iE '(PubkeyAccepted|HostkeyAlgorithms|Ciphers|MACs)' /etc/ssh/sshd_config || echo "no algorithm restrictions found"
+RUN sed -i \
+      -e 's/^#*\s*PubkeyAuthentication.*/PubkeyAuthentication yes/' \
+      -e 's/^#*\s*AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/' \
+      -e 's/^#*\s*PasswordAuthentication.*/PasswordAuthentication no/' \
+      -e 's/^#*\s*PermitRootLogin.*/PermitRootLogin no/' \
+      /etc/ssh/sshd_config \
+    && for directive in PubkeyAuthentication AuthorizedKeysFile PasswordAuthentication PermitRootLogin; do \
+         grep -q "^${directive}" /etc/ssh/sshd_config || echo "${directive} $( [ "$directive" = "AuthorizedKeysFile" ] && echo '.ssh/authorized_keys' || echo 'yes' )" >> /etc/ssh/sshd_config; \
+       done
 
 USER crabbox
 ENV SHELL=/bin/bash
