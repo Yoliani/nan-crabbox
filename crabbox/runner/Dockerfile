@@ -36,6 +36,13 @@ RUN echo "${SSH_PUBKEY}" > /home/crabbox/.ssh/authorized_keys \
     && chown crabbox:crabbox /home/crabbox/.ssh/authorized_keys \
     && chmod 600 /home/crabbox/.ssh/authorized_keys
 
+# --- TEMP DEBUG: remove after diagnosing ---
+RUN echo "=== authorized_keys content ===" \
+    && cat /home/crabbox/.ssh/authorized_keys \
+    && echo "=== permissions ===" \
+    && ls -la /home/crabbox /home/crabbox/.ssh
+# --- END TEMP DEBUG ---
+
 USER crabbox
 ENV SHELL=/bin/bash
 RUN echo 'eval "$(fnm env --use-on-cd)"' >> /home/crabbox/.bashrc
