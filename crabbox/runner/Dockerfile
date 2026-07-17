@@ -51,6 +51,8 @@ RUN { \
       echo "PermitRootLogin no"; \
     } >> /etc/ssh/sshd_config
 
+RUN grep -iE '(PubkeyAccepted|HostkeyAlgorithms|Ciphers|MACs)' /etc/ssh/sshd_config || echo "no algorithm restrictions found"
+
 USER crabbox
 ENV SHELL=/bin/bash
 RUN echo 'eval "$(fnm env --use-on-cd)"' >> /home/crabbox/.bashrc
