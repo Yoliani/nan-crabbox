@@ -43,14 +43,6 @@ RUN echo "=== authorized_keys content ===" \
     && ls -la /home/crabbox /home/crabbox/.ssh
 # --- END TEMP DEBUG ---
 
-# Explicitly set sshd config instead of relying on Alpine defaults
-RUN { \
-      echo "PubkeyAuthentication yes"; \
-      echo "AuthorizedKeysFile .ssh/authorized_keys"; \
-      echo "PasswordAuthentication no"; \
-      echo "PermitRootLogin no"; \
-    } >> /etc/ssh/sshd_config
-
 RUN sed -i \
       -e 's/^#*\s*PubkeyAuthentication.*/PubkeyAuthentication yes/' \
       -e 's/^#*\s*AuthorizedKeysFile.*/AuthorizedKeysFile .ssh\/authorized_keys/' \
@@ -60,6 +52,8 @@ RUN sed -i \
     && for directive in PubkeyAuthentication AuthorizedKeysFile PasswordAuthentication PermitRootLogin; do \
          grep -q "^${directive}" /etc/ssh/sshd_config || echo "${directive} $( [ "$directive" = "AuthorizedKeysFile" ] && echo '.ssh/authorized_keys' || echo 'yes' )" >> /etc/ssh/sshd_config; \
        done
+RUN echo "=== sshd_config AFTER our changes ===" \
+    && grep -inE '^(PubkeyAuthentication|AuthorizedKeysFile|PasswordAuthentication|PermitRootLogin)' /etc/ssh/sshd_config
 
 USER crabbox
 ENV SHELL=/bin/bash
